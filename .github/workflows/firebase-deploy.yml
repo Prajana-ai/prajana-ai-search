@@ -1,0 +1,33 @@
+name: Deploy to Firebase Hosting
+
+on:
+  push:
+    branches:
+      - main # Or your main development branch
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18' # Or your preferred Node.js version
+
+      - name: Install dependencies
+        run: npm ci # Or yarn install
+
+      - name: Build project # Build your Next.js app
+        run: npx next build
+
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/github-action-firebase-hosting@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_<YOUR_FIREBASE_PROJECT_ID> }}'
+          channelId: live # Or the channel you want to deploy to
+          projectId: <YOUR_FIREBASE_PROJECT_ID>
+          entrypoint: 'out' # Your Next.js build output directory
